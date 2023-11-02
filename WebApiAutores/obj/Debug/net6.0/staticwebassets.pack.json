@@ -1,0 +1,25 @@
+{
+  "Files": [
+    {
+      "Id": "C:\\Users\\ALEXGARCIA\\source\\repos\\WebApiAutores\\WebApiAutores\\wwwroot\\archivo1.txt",
+      "PackagePath": "staticwebassets\\archivo1.txt"
+    },
+    {
+      "Id": "obj\\Debug\\net6.0\\staticwebassets\\msbuild.WebApiAutores.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net6.0\\staticwebassets\\msbuild.build.WebApiAutores.props",
+      "PackagePath": "build\\WebApiAutores.props"
+    },
+    {
+      "Id": "obj\\Debug\\net6.0\\staticwebassets\\msbuild.buildMultiTargeting.WebApiAutores.props",
+      "PackagePath": "buildMultiTargeting\\WebApiAutores.props"
+    },
+    {
+      "Id": "obj\\Debug\\net6.0\\staticwebassets\\msbuild.buildTransitive.WebApiAutores.props",
+      "PackagePath": "buildTransitive\\WebApiAutores.props"
+    }
+  ],
+  "ElementsToRemove": []
+}
