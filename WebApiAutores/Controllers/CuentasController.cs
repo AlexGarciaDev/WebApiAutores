@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -6,6 +7,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using WebApiAutores.DTOs.Authentication;
+using WebApiAutores.Services;
 
 namespace WebApiAutores.Controllers
 {
@@ -16,12 +18,77 @@ namespace WebApiAutores.Controllers
         private readonly UserManager<IdentityUser> userManager;
         private readonly SignInManager<IdentityUser> signInManager;
         private readonly IConfiguration configuration;
+        private readonly IDataProtector dataProtector;
+        private readonly IServiceHash serviceHash;
 
-        public CuentasController(UserManager<IdentityUser> userManager, IConfiguration configuration, SignInManager<IdentityUser> signInManager)
+        public CuentasController(UserManager<IdentityUser> userManager, IConfiguration configuration, SignInManager<IdentityUser> signInManager, IDataProtectionProvider dataProtection, IServiceHash serviceHash)
         {
             this.userManager = userManager;
             this.configuration = configuration;
             this.signInManager = signInManager;
+            this.dataProtector = dataProtection.CreateProtector("TextoUnicoQueSirveComoLlave");
+            this.serviceHash = serviceHash;
+        }
+
+        [HttpGet("hash/{PlaneText}")]
+        public IActionResult BuilderHash(string PlaneText)
+        {
+            serviceHash.BuilderHash(PlaneText);
+            var hash1 = serviceHash.getHash();
+
+            serviceHash.BuilderHash(PlaneText);
+            var hash2 = serviceHash.getHash();
+
+            return Ok(new
+            {
+                PlaneText= PlaneText,
+                hash1 = hash1,
+                hash2 = hash2
+            });
+        }
+
+        [HttpGet("encrypt")]
+        public IActionResult Get()
+        {
+            var textoPlano = "Marlon Garcia";
+            var textoCifrado = dataProtector.Protect(textoPlano);
+            var textoDesencriptado = dataProtector.Unprotect(textoCifrado);
+
+            return Ok(new
+            {
+                textoPlano = textoPlano,
+                textoCifrado = textoCifrado,
+                textoDesencriptado = textoDesencriptado
+            });
+        }
+
+        [HttpGet("timeEncrypted")]
+        public IActionResult encryptTime()
+        {
+            var dataProtectorByTime = dataProtector.ToTimeLimitedDataProtector();
+            var textoPlano = "Marlon Garcia";
+            var textoCifrado = dataProtectorByTime.Protect(textoPlano, lifetime: TimeSpan.FromSeconds(5));
+            var textoDesencriptado = "";
+
+            Thread.Sleep(6000);
+
+            try
+            {
+                textoDesencriptado = dataProtectorByTime.Unprotect(textoCifrado);
+            }
+            catch(Exception ex)
+            {
+                textoDesencriptado+= ex.Message;
+            }
+
+            
+
+            return Ok(new
+            {
+                textoPlano = textoPlano,
+                textoCifrado = textoCifrado,
+                textoDesencriptado = textoDesencriptado
+            });
         }
 
         [HttpPost("register")]

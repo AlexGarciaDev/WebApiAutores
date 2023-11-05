@@ -12,6 +12,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
 using System.IdentityModel.Tokens.Jwt;
+using WebApiAutores.Services.ImplementServicesHash;
 
 namespace WebApiAutores
 {
@@ -39,6 +40,7 @@ namespace WebApiAutores
             
             services.AddEndpointsApiExplorer();
             services.AddTransient<IServicio, ServicioA>();
+            services.AddTransient<IServiceHash, ServiceHash>();
             services.AddTransient<ServicioTransient>();
             services.AddScoped<ServicioScoped>();
             services.AddSingleton<ServicioSingleton>();
@@ -116,6 +118,8 @@ namespace WebApiAutores
             services.AddAutoMapper(typeof(Startup));
 
             services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+
+            services.AddDataProtection();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger logger)
